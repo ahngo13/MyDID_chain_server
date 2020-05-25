@@ -56,6 +56,8 @@ const csrfCheck = (req, res, next) => {
 };
 
 /**
+* 사용자 정의 헤더`X-Requested-With`를 사용하여 CSRF 보호 확인
+ * 쿠키에`username`이 포함되어 있지 않으면 사용자가 인증되지 않은 것으로 간주하십시오.
  * Checks CSRF protection using custom header `X-Requested-With`
  * If cookie doesn't contain `username`, consider the user is not authenticated.
  **/
@@ -68,7 +70,9 @@ const sessionCheck = (req, res, next) => {
 };
 
 /**
- * Check username, create a new account if it doesn't exist.
+* 사용자 이름을 확인하고 존재하지 않는 경우 새 계정을 만드십시오.
+ `username` 쿠키를 설정하십시오.
+  * Check username, create a new account if it doesn't exist.
  * Set a `username` cookie.
  **/
 router.post('/username', (req, res) => {
@@ -101,7 +105,10 @@ router.post('/username', (req, res) => {
 });
 
 /**
- * Verifies user credential and let the user sign-in.
+* 사용자 자격 증명을 확인하고 사용자가 로그인하도록합니다.
+ * 사전 등록이 필요하지 않습니다.
+ *`username`이 빈 문자열이 아닌지 확인하고 비밀번호를 무시합니다.
+  * Verifies user credential and let the user sign-in.
  * No preceding registration required.
  * This only checks if `username` is not empty string and ignores the password.
  **/
@@ -132,7 +139,9 @@ router.get('/signout', (req, res) => {
 });
 
 /**
- * Returns a credential id
+* 자격 증명 ID를 반환
+ * (이 서버는 사용자 이름 당 하나의 키만 저장합니다.)
+ *  * Returns a credential id
  * (This server only stores one key per username.)
  * Response format:
  * ```{
@@ -158,7 +167,9 @@ router.post('/getKeys', csrfCheck, sessionCheck, (req, res) => {
 });
 
 /**
- * Removes a credential id attached to the user
+* 사용자에게 첨부 된 자격 증명 ID를 제거합니다
+ * 빈 JSON`{}`로 응답
+ *  * Removes a credential id attached to the user
  * Responds with empty JSON `{}`
  **/
 router.post('/removeKey', csrfCheck, sessionCheck, (req, res) => {
@@ -188,7 +199,9 @@ router.get('/resetDB', (req, res) => {
 });
 
 /**
- * Respond with required information to call navigator.credential.create()
+* navigator.credential.create ()를 호출하는 데 필요한 정보로 응답
+ * 입력은 출력과 비슷한 형식으로 'rebody.body'를 통해 전달됩니다.
+ *  Respond with required information to call navigator.credential.create()
  * Input is passed via `req.body` with similar format as output
  * Output format:
  * ```{
@@ -283,6 +296,7 @@ router.post('/registerRequest', csrfCheck, sessionCheck, async (req, res) => {
 
 /**
  * Register user credential.
+* 사용자 자격 증명을 등록하십시오.
  * Input format:
  * ```{
      id: String,
@@ -359,6 +373,8 @@ router.post('/registerResponse', csrfCheck, sessionCheck, async (req, res) => {
 /**
  * Respond with required information to call navigator.credential.get()
  * Input is passed via `req.body` with similar format as output
+* navigator.credential.get ()을 호출하기 위해 필요한 정보로 응답
+ * 입력은 출력과 비슷한 형식으로 'rebody.body'를 통해 전달됩니다.
  * Output format:
  * ```{
      challenge: String,
@@ -411,6 +427,7 @@ router.post('/signinRequest', csrfCheck, async (req, res) => {
 
 /**
  * Authenticate the user.
+* 사용자를 인증하십시오.
  * Input format:
  * ```{
      id: String,
