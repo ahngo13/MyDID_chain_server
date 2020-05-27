@@ -21,7 +21,12 @@ const cookieParser = require('cookie-parser');
 const hbs = require('hbs');
 const auth = require('./libs/auth');
 const app = express();
+const HLF_SDK_router = require("./libs/MyDID-HLF-SDK");
+const enroll = require("./HLF-SDK/connection");
 
+//enroll();
+
+app.use('/chain', HLF_SDK_router);
 app.set('view engine', 'html');
 app.engine('html', hbs.__express);
 app.set('views', './views');
@@ -31,7 +36,7 @@ app.use(express.static('public'));
 
 app.use((req, res, next) => {
   if (req.get('x-forwarded-proto') &&
-     (req.get('x-forwarded-proto')).split(',')[0] !== 'https') {
+    (req.get('x-forwarded-proto')).split(',')[0] !== 'https') {
     return res.redirect(301, `https://${process.env.HOSTNAME}`);
   }
   req.schema = 'https';
@@ -44,6 +49,7 @@ app.get('/', (req, res) => {
   if (req.cookies.username) {
     // If user is signed in, redirect to `/reauth`.
     res.redirect(307, '/reauth');
+
     return;
   }
   // If user is not signed in, show `index.html` with id/password form.
@@ -52,13 +58,13 @@ app.get('/', (req, res) => {
 
 app.get('/home', (req, res) => {
   if (!req.cookies.username ||
-      req.cookies['signed-in'] != 'yes') {
+    req.cookies['signed-in'] != 'yes') {
     // If user is not signed in, redirect to `/`.
     res.redirect(307, '/');
     return;
   }
   // `home.html` shows sign-out link
-  res.render('home.html', {username: req.cookies.username});
+  res.render('home.html', { username: req.cookies.username });
 });
 
 app.get('/reauth', (req, res) => {
@@ -70,7 +76,7 @@ app.get('/reauth', (req, res) => {
   // Show `reauth.html`.
   // User is supposed to enter a password (which will be ignored)
   // Make XHR POST to `/signin`
-  res.render('reauth.html', {username: username});
+  res.render('reauth.html', { username: username });
 });
 
 app.get('/.well-known/assetlinks.json', (req, res) => {
@@ -104,7 +110,7 @@ app.get('/.well-known/assetlinks.json', (req, res) => {
 app.use('/auth', auth);
 
 // listen for req :)
-const port = process.env.GLITCH_DEBUGGER ? null : 8080;
+const port = process.env.GLITCH_DEBUGGER ? null : 8090;
 const listener = app.listen(port || process.env.PORT, () => {
   console.log('Your app is listening on port ' + listener.address().port);
 });
