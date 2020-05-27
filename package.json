@@ -12,7 +12,9 @@
     "cookie-parser": "^1.4.4",
     "lowdb": "^1.0.0",
     "crypto": "^1.0.1",
-    "fido2-lib": "agektmr/fido2-lib#android-compatible3"
+    "fido2-lib": "agektmr/fido2-lib#android-compatible3",
+    "fabric-ca-client": "^1.4.8",
+    "fabric-network": "^1.4.8"
   },
   "engines": {
     "node": "8.x"

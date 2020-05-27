@@ -53,3 +53,8 @@ body {
   right: 30px;
   bottom: 30px;
 }
+#authenticate {
+  position: fixed;
+  left: 30px;
+  bottom:30px;
+}
