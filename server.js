@@ -21,9 +21,9 @@ const cookieParser = require('cookie-parser');
 const hbs = require('hbs');
 const auth = require('./libs/auth');
 const app = express();
-const enroll = require("./HLF-SDK/connection");
+//const enroll = require("./HLF-SDK/connection");
 
-enroll();
+//enroll();
 
 app.set('view engine', 'html');
 app.engine('html', hbs.__express);
@@ -106,8 +106,7 @@ app.get('/.well-known/assetlinks.json', (req, res) => {
 });
 
 app.use('/auth', auth);
-//app.use('/chain', HLF_SDK_router);
-// listen for req :)
+
 const port = process.env.GLITCH_DEBUGGER ? null : 8090;
 const listener = app.listen(port || process.env.PORT, () => {
   console.log('Your app is listening on port ' + listener.address().port);
