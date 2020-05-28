@@ -34,12 +34,12 @@ require("dotenv").config();
 const enroll = require("./HLF-SDK/connection");
 app.use(function (req, res, next) {
   if (!req.secure) {
-    res.redirect("https://mydid.kro.kr" + req.url);
+    res.redirect("https://mydid.kro.kr/" + req.url);
   }
   else {
     next();
   }
-});
+})
 
 enroll();
 

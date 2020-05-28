@@ -35,7 +35,7 @@
     },
     "orderers": {
         "orderer.example.com": {
-            "url": "grpcs://localhost:7050",
+            "url": "grpcs://210.107.78.154:7050",
             "grpcOptions": {
                 "ssl-target-name-override": "orderer.example.com"
             },
@@ -46,7 +46,7 @@
     },
     "peers": {
         "peer0.org1.example.com": {
-            "url": "grpcs://localhost:7051",
+            "url": "grpcs://210.107.78.154:7051",
             "grpcOptions": {
                 "ssl-target-name-override": "peer0.org1.example.com"
             },
@@ -57,7 +57,7 @@
     },
     "certificateAuthorities": {
         "ca.example.com": {
-            "url": "https://localhost:7054",
+            "url": "https://210.107.78.154:7054",
             "caName": "ca.example.com",
             "tlsCACerts": {
                 "path": "../../HLF/fabric-samples/baba2/crypto-config/peerOrganizations/org1.example.com/ca/ca.org1.example.com-cert.pem"
