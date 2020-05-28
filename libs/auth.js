@@ -23,7 +23,7 @@ const { coerceToBase64Url,
   coerceToArrayBuffer
 } = require('fido2-lib/lib/utils');
 const fs = require('fs');
-//const chain = require('./MyDID-HLF-SDK');
+const chain = require('./MyDID-HLF-SDK');
 
 const low = require('lowdb');
 
