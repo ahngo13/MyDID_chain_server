@@ -21,6 +21,14 @@ const cookieParser = require('cookie-parser');
 const hbs = require('hbs');
 const auth = require('./libs/auth');
 const app = express();
+const https = require('https');
+const fs = require('fs');
+const path = require('path');
+const options = {
+  ca: fs.readFileSync(path.join(__dirname, 'mydid.kro.kr/ca_bundle.crt')),
+  key: fs.readFileSync(path.join(__dirname, 'mydid.kro.kr/private.key')),
+  cert: fs.readFileSync(path.join(__dirname, 'mydid.kro.kr/certificate.crt'))
+};
 //const enroll = require("./HLF-SDK/connection");
 
 //enroll();
@@ -107,7 +115,6 @@ app.get('/.well-known/assetlinks.json', (req, res) => {
 
 app.use('/auth', auth);
 
-const port = process.env.GLITCH_DEBUGGER ? null : 8090;
-const listener = app.listen(port || process.env.PORT, () => {
-  console.log('Your app is listening on port ' + listener.address().port);
+https.createServer(options, app).listen(443, () => {
+  console.log('Your app is listening on port 443');
 });
