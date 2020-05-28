@@ -26,10 +26,10 @@
                 "ca.example.com"
             ],
             "adminPrivateKey": {
-                "path": "../HLF/fabric-samples/baba2/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/keystore/c582258394d6cc5a5eb1fd9d3a73c2c7eebb2a2f36aba66c55e72391473a459c_sk"
+                "path": "../../HLF/fabric-samples/baba2/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/keystore/c582258394d6cc5a5eb1fd9d3a73c2c7eebb2a2f36aba66c55e72391473a459c_sk"
             },
             "signedCert": {
-                "path": "../HLF/fabric-samples/baba2/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/signcerts/Admin@org1.example.com-cert.pem"
+                "path": "../../HLF/fabric-samples/baba2/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/signcerts/Admin@org1.example.com-cert.pem"
             }
         }
     },
@@ -40,7 +40,7 @@
                 "ssl-target-name-override": "orderer.example.com"
             },
             "tlsCACerts": {
-                "path": "../HLF/fabric-samples/baba2/crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem"
+                "path": "../../HLF/fabric-samples/baba2/crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem"
             }
         }
     },
@@ -51,7 +51,7 @@
                 "ssl-target-name-override": "peer0.org1.example.com"
             },
             "tlsCACerts": {
-                "path": "../HLF/fabric-samples/baba2/crypto-config/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/msp/tlscacerts/tlsca.org1.example.com-cert.pem"
+                "path": "../../HLF/fabric-samples/baba2/crypto-config/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/msp/tlscacerts/tlsca.org1.example.com-cert.pem"
             }
         }
     },
@@ -60,7 +60,7 @@
             "url": "https://localhost:7054",
             "caName": "ca.example.com",
             "tlsCACerts": {
-                "path": "../HLF/fabric-samples/baba2/crypto-config/peerOrganizations/org1.example.com/ca/ca.org1.example.com-cert.pem"
+                "path": "../../HLF/fabric-samples/baba2/crypto-config/peerOrganizations/org1.example.com/ca/ca.org1.example.com-cert.pem"
             },
             "httpOptions": {
                 "verify": false
