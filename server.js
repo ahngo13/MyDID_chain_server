@@ -22,6 +22,7 @@ const hbs = require('hbs');
 const auth = require('./libs/auth');
 const app = express();
 const https = require('https');
+const http = requere('http');
 const fs = require('fs');
 const path = require('path');
 const options = {
@@ -115,6 +116,7 @@ app.get('/.well-known/assetlinks.json', (req, res) => {
 
 app.use('/auth', auth);
 
+http.createServer(app).listen(80)
 https.createServer(options, app).listen(443, () => {
   console.log('Your app is listening on port 443');
 });
