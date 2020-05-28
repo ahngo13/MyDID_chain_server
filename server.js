@@ -30,9 +30,10 @@ const options = {
   key: fs.readFileSync(path.join(__dirname, 'mydid.kro.kr/private.key')),
   cert: fs.readFileSync(path.join(__dirname, 'mydid.kro.kr/certificate.crt'))
 };
-//const enroll = require("./HLF-SDK/connection");
+require("dotenv").config();
+const enroll = require("./HLF-SDK/connection");
 
-//enroll();
+enroll();
 
 app.set('view engine', 'html');
 app.engine('html', hbs.__express);
