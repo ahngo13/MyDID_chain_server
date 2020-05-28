@@ -21,12 +21,10 @@ const cookieParser = require('cookie-parser');
 const hbs = require('hbs');
 const auth = require('./libs/auth');
 const app = express();
-const HLF_SDK_router = require("./libs/MyDID-HLF-SDK");
 const enroll = require("./HLF-SDK/connection");
 
-//enroll();
+enroll();
 
-app.use('/chain', HLF_SDK_router);
 app.set('view engine', 'html');
 app.engine('html', hbs.__express);
 app.set('views', './views');
@@ -108,7 +106,7 @@ app.get('/.well-known/assetlinks.json', (req, res) => {
 });
 
 app.use('/auth', auth);
-
+//app.use('/chain', HLF_SDK_router);
 // listen for req :)
 const port = process.env.GLITCH_DEBUGGER ? null : 8090;
 const listener = app.listen(port || process.env.PORT, () => {

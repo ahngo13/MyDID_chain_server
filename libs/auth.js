@@ -23,6 +23,7 @@ const { coerceToBase64Url,
   coerceToArrayBuffer
 } = require('fido2-lib/lib/utils');
 const fs = require('fs');
+//const chain = require('./MyDID-HLF-SDK');
 
 const low = require('lowdb');
 
@@ -42,7 +43,7 @@ db.defaults({
 
 var registerObjects = {
   '1234::1234': {
-    id: 'yho.com::112',
+    id: 'yho.com.com::112',
     username: '112',
     url: 'yho.com'
   }
@@ -65,6 +66,7 @@ const f2l = new Fido2Lib({
   challengeSize: 32,
   cryptoParams: [-7]
 });
+
 
 
 const csrfCheck = (req, res, next) => {
@@ -106,15 +108,18 @@ router.post('/register', (req, res) => {
     const url = urlimsi.hostname;
     const registerNumber = req.body.registerNumber;
     const registerObjectId = username + '::' + registerNumber;
-    if (!registerObjects[registerObjectId]) {
+    if (url && urlimsi && registerNumber && !registerObjects[registerObjectId]) {
       registerObjects[registerObjectId] = {
         id: url + '::' + username,
         username: username,
         url: url
       }
-      res.json({ message: '어플리케이션을 통하여 등록을 완료해 주십시오' });
+      res.json({ message: '5분안에 어플리케이션을 통하여 등록을 완료해 주십시오' });
       console.log(registerObjectId, url);
       console.log(req.headers);
+      setTimeout(() => {
+        delete registerObjects[registerObjectId];
+      }, 300000);
     }
     else {
       res.json({ message: '다른 인증 번호를 입력하여 주십시오' });
@@ -394,8 +399,10 @@ router.post('/registerResponse', csrfCheck, sessionCheck, async (req, res) => {
       res.clearCookie('challenge');
       res.clearCookie('username');
       delete registerObjects[req.cookies.username];
+
+      await chain.insert(user.id, credential.publicKey);
       // Respond with user info
-      user.message("등록완료!!")
+      user.message("등록완료!!");
       res.json(user);
     } else {
       res.clearCookie('challenge');

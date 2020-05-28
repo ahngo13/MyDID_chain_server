@@ -48,6 +48,9 @@ jspm_packages/
 HLF-SDK/
 wallet/
 mysql/
+.data
+crypto-config/
+
 # TypeScript v1 declaration files
 typings/
 

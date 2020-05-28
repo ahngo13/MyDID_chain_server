@@ -12,70 +12,56 @@ const walletPath = path.join(process.cwd(), 'wallet');
 const wallet = new FileSystemWallet(walletPath);
 const gateway = new Gateway();
 
+class chain {
+    query = async (id) => {
+        try {
+            await gateway.connect(ccp, { wallet, identity: 'user1', discovery: { enabled: false } });
+            const network = await gateway.getNetwork('mychannel');
+            const contract = network.getContract('mydid');
+            const result = await contract.evaluateTransaction('query', id);
+            const a = result.toString('utf-8');
+            return a;
+        } catch (error) {
+            return error;
+        }
+    }
 
+    insert = async (id, key) => {
+        try {
+            await gateway.connect(ccp, { wallet, identity: 'user1', discovery: { enabled: false } });
+            const network = await gateway.getNetwork('mychannel');
+            const contract = network.getContract('mydid');
+            const result = await contract.submitTransaction('insert', id, key);
+            return `Transaction has been evaluated, result is: ${result.toString()}`;
+        } catch (error) {
+            console.error(`Failed to evaluate transaction: ${error}`);
+            return error;
+        }
+    }
 
-const db = require("../mysql/con");
+    changepk = async (id, key) => {
+        try {
+            await gateway.connect(ccp, { wallet, identity: 'user1', discovery: { enabled: false } });
+            const network = await gateway.getNetwork('mychannel');
+            const contract = network.getContract('mydid');
+            const result = await contract.submitTransaction('changepk', id, key);
+            return `Transaction has been evaluated, result is: ${result.toString()}`;
+        } catch (error) {
+            return error
+        }
+    }
 
-query = async (id) => {
-    try {
-        await gateway.connect(ccp, { wallet, identity: 'user1', discovery: { enabled: false } });
-        const network = await gateway.getNetwork('mychannel');
-        const contract = network.getContract('mydid');
-        const result = await contract.evaluateTransaction('query', id);
-        return result.toString;
-    } catch (error) {
-        console.error(`Failed to evaluate transaction: ${error}`);
+    deleteid = async (id) => {
+        try {
+            await gateway.connect(ccp, { wallet, identity: 'user1', discovery: { enabled: false } });
+            const network = await gateway.getNetwork('mychannel');
+            const contract = network.getContract('mydid');
+            const result = await contract.submitTransaction('delete', id);
+            return `Transaction has been evaluated, result is: ${result.toString()}`;
+        } catch (error) {
+            return error
+        }
     }
 }
 
-insert = async (id, key) => {
-    try {
-        await gateway.connect(ccp, { wallet, identity: 'user1', discovery: { enabled: false } });
-        const network = await gateway.getNetwork('mychannel');
-        const contract = network.getContract('mydid');
-        const result = await contract.evaluateTransaction('insert', id, key);
-        console.log(`Transaction has been evaluated, result is: ${result.toString()}`);
-    } catch (error) {
-        console.error(`Failed to evaluate transaction: ${error}`);
-    }
-}
-
-changepk = async (id, key) => {
-    try {
-        await gateway.connect(ccp, { wallet, identity: 'user1', discovery: { enabled: false } });
-        const network = await gateway.getNetwork('mychannel');
-        const contract = network.getContract('mydid');
-        const result = await contract.evaluateTransaction('changepk', id, key);
-        console.log(`Transaction has been evaluated, result is: ${result.toString()}`);
-    } catch (error) {
-        console.error(`Failed to evaluate transaction: ${error}`);
-    }
-}
-
-deleteid = async (id) => {
-    try {
-        await gateway.connect(ccp, { wallet, identity: 'user1', discovery: { enabled: false } });
-        const network = await gateway.getNetwork('mychannel');
-        const contract = network.getContract('mydid');
-        const result = await contract.evaluateTransaction('delete', id);
-        console.log(`Transaction has been evaluated, result is: ${result.toString()}`);
-    } catch (error) {
-        console.error(`Failed to evaluate transaction: ${error}`);
-    }
-}
-
-
-
-router.post('/query', (req, res) => {
-    //user 검증
-})
-router.post('/insert', (req, res) => {
-
-})
-router.post('/chagepk', (req, res) => {
-
-})
-router.post('/delete', (req, res) => {
-
-})
-module.exports = router;
+module.exports = new chain;
