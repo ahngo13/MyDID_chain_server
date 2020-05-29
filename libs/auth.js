@@ -43,14 +43,14 @@ db.defaults({
 
 var registerObjects = {
   '1234::1234': {
-    id: 'yho.cdddo.d.m.com::112',
+    id: 'yho.ddcdddo.d.m.com::112',
     username: '112',
     url: 'yho.com'
   }
 };
 var signinObjects = {
   '1234::1234': {
-    id: 'yho.com::112',
+    id: 'yho.ddcdddo.d.m.com::112',
     username: '112',
     url: 'yho.com'
   }
