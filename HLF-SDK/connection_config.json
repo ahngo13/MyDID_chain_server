@@ -1,6 +1,9 @@
 {
     "name": "basic-network",
     "version": "1.0.0",
+    "client":{
+	"organization":"Org1"
+    },
     "channels": {
         "mychannel": {
             "orderers": [
@@ -52,7 +55,7 @@
     },
     "certificateAuthorities": {
         "ca.example.com": {
-            "url": "https://210.107.78.154:7054",
+            "url": "http://210.107.78.154:7054",
             "caName": "ca.example.com",
             "tlsCACerts": {
                 "path": "../HLF/fabric-samples/baba2/crypto-config/peerOrganizations/org1.example.com/ca/ca.org1.example.com-cert.pem"

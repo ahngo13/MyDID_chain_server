@@ -43,7 +43,7 @@ db.defaults({
 
 var registerObjects = {
   '1234::1234': {
-    id: 'yho.com.com::112',
+    id: 'yho.cdddo.d.m.com::112',
     username: '112',
     url: 'yho.com'
   }
@@ -271,6 +271,7 @@ router.get('/resetDB', (req, res) => {
  * }```
  **/
 router.post('/registerRequest', csrfCheck, sessionCheck, async (req, res) => {
+  console.log(req.cookies.username);
   const username = registerObjects[req.cookies.username].id;
   let user = db.get('users')
     .find({ id: username })
@@ -402,7 +403,11 @@ router.post('/registerResponse', csrfCheck, sessionCheck, async (req, res) => {
 
       await chain.insert(user.id, credential.publicKey);
       // Respond with user info
+<<<<<<< HEAD
       user.message = "등록완료!!";
+=======
+      user.message="등록완료!!";
+>>>>>>> a19ed2f728281551b94d4142ce818709399de4fb
       res.json(user);
     } else {
       res.clearCookie('challenge');
