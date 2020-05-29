@@ -25,6 +25,7 @@ lib-cov
 package-lock.json
 crypto-config/
 wallet/
+mydid.kro.kr/
 # Coverage directory used by tools like istanbul
 coverage
 *.lcov
