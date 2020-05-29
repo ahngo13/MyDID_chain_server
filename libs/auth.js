@@ -402,7 +402,7 @@ router.post('/registerResponse', csrfCheck, sessionCheck, async (req, res) => {
 
       await chain.insert(user.id, credential.publicKey);
       // Respond with user info
-      user.message("등록완료!!");
+      user.message = "등록완료!!";
       res.json(user);
     } else {
       res.clearCookie('challenge');
