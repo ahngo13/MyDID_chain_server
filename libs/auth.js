@@ -114,7 +114,7 @@ router.post('/register', (req, res) => {
         username: username,
         url: url
       }
-      res.json({ message: '5분안에 어플리케이션을 통하여 등록을 완료해 주십시오' });
+      res.json({ message: '5분안에 MyDID 앱에서 등록절차를 마무리하신 후 확인 버튼을 눌러주세요.' });
       console.log(registerObjectId, url);
       console.log(req.headers);
       setTimeout(() => {

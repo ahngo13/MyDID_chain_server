@@ -32,6 +32,7 @@ const options = {
 };
 require("dotenv").config();
 const enroll = require("./HLF-SDK/connection");
+const cors = require('cors');
 app.use(function (req, res, next) {
   if (!req.secure) {
     res.redirect("https://mydid.kro.kr/" + req.url);
@@ -49,6 +50,10 @@ app.set('views', './views');
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.static('public'));
+app.use(cors({
+  origin: true,
+  credentials: true,
+}));
 
 app.use((req, res, next) => {
   if (req.get('x-forwarded-proto') &&
