@@ -26,6 +26,7 @@ package-lock.json
 crypto-config/
 wallet/
 mydid.kro.kr/
+HLF-SDK/
 # Coverage directory used by tools like istanbul
 coverage
 *.lcov
