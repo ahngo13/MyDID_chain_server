@@ -33,24 +33,26 @@
 </head>
 
 <body class="mdc-typography">
-  <header class="mdc-top-app-bar" style="top:0px">
+  <header class="mdc-top-app-bar" style="top:0px; background-color: cornflowerblue;">
     <h1 class="mdc-top-app-bar__title">
-      WebAuthn codelab
+      MyDID
     </h1>
   </header>
   <main class="content mdc-top-app-bar--fixed-adjust">
     <h2>
-      Enter a password
+      인증번호
     </h2>
     <form id="form" method="POST" action="/auth/password">
       <input type="hidden" name="username" value="{{username}}" />
       <div class="mdc-text-field">
         <input type="password" class="mdc-text-field__input" name="password" />
         <div class="mdc-line-ripple"></div>
-        <label class="mdc-floating-label">password</label>
+        <label class="mdc-floating-label">인증번호</label>
       </div>
-      <input type="submit" class="mdc-button mdc-button--raised" value="Sign-In" />
+      <input type="submit" class="mdc-button mdc-button--raised" value="Sign-In"
+        style="position: fixed; bottom:0vw; left:0vw; width:100vw; height: 20vw; background-color: cornflowerblue;" />
     </form>
+    <h2>WEB에서 입력한 인증번호를 입력해주세요.</h2>
   </main>
   <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
   <script type="module">

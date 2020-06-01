@@ -199,6 +199,8 @@ router.post('/getKeys', csrfCheck, sessionCheck, (req, res) => {
   const user = db.get('users')
     .find({ username: req.cookies.username })
     .value();
+
+  console.log(user || {});
   res.json(user || {});
 });
 
@@ -464,9 +466,12 @@ router.post('/registersignin', (req, res) => {
         username: username,
         url: url
       }
-      res.json({ message: '어플리케이션을 통하여 등록을 완료해 주십시오' });
+      res.json({ message: '5분안에 MyDID 앱에서 등록절차를 마무리하신 후 확인 버튼을 눌러주세요.' });
       console.log(registerObjectId, url);
       console.log(req.headers);
+      setTimeout(() => {
+        delete signinObjects[registerObjectId];
+      }, 300000)
     }
     else {
       res.json({ message: '다른 인증 번호를 입력하여 주십시오' });
@@ -477,8 +482,8 @@ router.post('/registersignin', (req, res) => {
 
 router.post('/signinRequest', csrfCheck, async (req, res) => {
   try {
-    if (registerObjects[req.cookies.username]) {
-      const username = registerObjects[req.cookies.username];
+    if (signinObjects[req.cookies.username]) {
+      const username = signinObjects[req.cookies.username];
       const user = db.get('users')
         .find({ id: username.id })
         .value();
@@ -507,7 +512,7 @@ router.post('/signinRequest', csrfCheck, async (req, res) => {
       });
       res.json(response);
     } else {
-      res.status(401).json({ error: 'Id와 인증번호를 확인하여 주십시오. FiDo2 기반 DID 서비스를 사용하려는 웹에서 먼저 등록해야 합니다.' });
+      res.status(401).json({ error: 'Id와 인증번호를 확인하여 주십시오. FiDo2 기반 DID 서비스를 사용하려는 웹에서 먼저 인증요청을 해야 합니다.' });
     }
   } catch (e) {
     res.status(400).json({ error: e });
@@ -533,7 +538,7 @@ router.post('/signinRequest', csrfCheck, async (req, res) => {
 router.post('/signinResponse', csrfCheck, async (req, res) => {
   // Query the user
   const user = db.get('users')
-    .find({ id: registerObjects[req.cookies.username].id })
+    .find({ id: signinObjects[req.cookies.username].id })
     .value();
 
   let credential = null;
@@ -567,6 +572,8 @@ router.post('/signinResponse', csrfCheck, async (req, res) => {
       prevCounter: credential.prevCounter,
       userHandle: coerceToArrayBuffer(user.id, 'userHandle')
     };
+
+    signinObjects[req.cookies.username] = { confirm: 0 }
     const result = await f2l.assertionResult(clientAssertionResponse, assertionExpectations);
 
     credential.prevCounter = result.authnrData.get("counter");
@@ -576,13 +583,29 @@ router.post('/signinResponse', csrfCheck, async (req, res) => {
       .assign(user)
       .write();
 
+    signinObjects[req.cookies.username] = { confirm: 1 }
+    res.clearCookie('id');
     res.clearCookie('challenge');
-    res.cookie('signed-in', 'yes');
+    res.clearCookie('username');
     res.json(user);
   } catch (e) {
+    res.clearCookie('id');
     res.clearCookie('challenge');
+    res.clearCookie('username');
     res.status(400).json({ error: e });
   }
 });
+router.post('/confirmsignin', (req, res) => {
+  const memkey = req.body.username + '::' + req.body.registerNumber;
+  const dbkey = new URL(req.headers.origin).hostname + '::' + req.body.username;
+  console.log(memkey, dbkey);
+  if (signinObjects[memkey].confirm === 1) {
+    delete signinObjects[memkey];
+    res.json({ message: "인증이 완료되었습니다!" });
+  } else {
+    delete signinObjects[memkey];
+    res.json({ message: "인증에 실패하였습니다. 처음부터 다시 시도해주세요" });
+  }
+})
 
 module.exports = router;
