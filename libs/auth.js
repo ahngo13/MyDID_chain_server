@@ -116,7 +116,6 @@ router.post('/register', (req, res) => {
       }
       res.json({ message: '5분안에 MyDID 앱에서 등록절차를 마무리하신 후 확인 버튼을 눌러주세요.' });
       console.log(registerObjectId, url);
-      console.log(req.headers);
       setTimeout(() => {
         delete registerObjects[registerObjectId];
       }, 300000);
@@ -155,8 +154,10 @@ router.post('/password', (req, res) => {
     return;
   }
   const userkey = req.cookies.username + "::" + req.body.password;
-  if (!registerObjects[userkey]) {
-    res.status(401).json({ error: 'Id와 인증번호를 확인하여 주십시오. FiDo2 기반 DID 서비스를 사용하려는 웹에서 먼저 등록해야 합니다.' });
+  console.log("regi" + registerObjects[userkey]);
+  console.log("sign" + signinObjects[userkey]);
+  if (!registerObjects[userkey] && !signinObjects[userkey]) {
+    res.status(401).json({ error: 'Id와 인증번호를 확인하여 주십시오. FiDo2 기반 DID 서비스를 사용하려는 웹에서 먼저 등록해야 합니다. 등록이 완료된 상태라면 인증과 등록 중 올바른 메뉴를 선택하세요.' });
     return;
   }
   res.cookie('username', userkey);
@@ -197,7 +198,7 @@ router.get('/signout', (req, res) => {
 /****************************************************************************************수정필요 */
 router.post('/getKeys', csrfCheck, sessionCheck, (req, res) => {
   const user = db.get('users')
-    .find({ username: req.cookies.username })
+    .find({ id: req.cookies.username })
     .value();
 
   console.log(user || {});
@@ -270,7 +271,7 @@ router.get('/resetDB', (req, res) => {
        userVerification: ('required'|'preferred'|'discouraged')
      },
      attestation: ('none'|'indirect'|'direct')
- * }```
+ * }
  **/
 router.post('/registerRequest', csrfCheck, sessionCheck, async (req, res) => {
   console.log(req.cookies.username);
@@ -320,7 +321,6 @@ router.post('/registerRequest', csrfCheck, sessionCheck, async (req, res) => {
       if (cp && (cp == 'none' || cp == 'indirect' || cp == 'direct')) {
         response.attestation = cp;
       }
-      console.log('11');
       res.json(response);
     } else {
       res.status(400).send({ error: "해당 계정에 대한 Fido2 Credential이 존재합니다." });
@@ -460,6 +460,7 @@ router.post('/registersignin', (req, res) => {
     const url = urlimsi.hostname;
     const registerNumber = req.body.registerNumber;
     const registerObjectId = username + '::' + registerNumber;
+    console.log(signinObjects[registerObjectId]);
     if (!signinObjects[registerObjectId]) {
       signinObjects[registerObjectId] = {
         id: url + '::' + username,
@@ -468,7 +469,6 @@ router.post('/registersignin', (req, res) => {
       }
       res.json({ message: '5분안에 MyDID 앱에서 등록절차를 마무리하신 후 확인 버튼을 눌러주세요.' });
       console.log(registerObjectId, url);
-      console.log(req.headers);
       setTimeout(() => {
         delete signinObjects[registerObjectId];
       }, 300000)
@@ -482,7 +482,9 @@ router.post('/registersignin', (req, res) => {
 
 router.post('/signinRequest', csrfCheck, async (req, res) => {
   try {
+    console.log(req.cookies.username);
     if (signinObjects[req.cookies.username]) {
+
       const username = signinObjects[req.cookies.username];
       const user = db.get('users')
         .find({ id: username.id })
@@ -490,7 +492,6 @@ router.post('/signinRequest', csrfCheck, async (req, res) => {
 
       if (!user) {
         // Send empty response if user is not registered yet.
-        console.log("aa");
         res.json({ error: 'User not found.' });
         return;
       }
@@ -598,10 +599,9 @@ router.post('/signinResponse', csrfCheck, async (req, res) => {
 router.post('/confirmsignin', (req, res) => {
   const memkey = req.body.username + '::' + req.body.registerNumber;
   const dbkey = new URL(req.headers.origin).hostname + '::' + req.body.username;
-  console.log(memkey, dbkey);
   if (signinObjects[memkey].confirm === 1) {
     delete signinObjects[memkey];
-    res.json({ message: "인증이 완료되었습니다!" });
+    res.json({ message: "인증이 완료되었습니다!", key: '1' });
   } else {
     delete signinObjects[memkey];
     res.json({ message: "인증에 실패하였습니다. 처음부터 다시 시도해주세요" });
