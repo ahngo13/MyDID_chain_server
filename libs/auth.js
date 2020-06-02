@@ -102,7 +102,7 @@ router.post('/register', (req, res) => {
         username: username,
         url: url
       }
-      res.json({ message: '5분안에 MyDID 앱에서 등록절차를 마무리하신 후 확인 버튼을 눌러주세요.' });
+      res.json({ message: '5분안에 MyDID 앱에서 등록절차를 마무리하신 후 확인 버튼을 눌러주세요.', key: 1 });
       console.log(registerObjectId, url);
       setTimeout(() => {
         delete registerObjects[registerObjectId];
