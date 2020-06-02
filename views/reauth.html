@@ -45,9 +45,8 @@
     <form id="form" method="POST" action="/auth/password">
       <input type="hidden" name="username" value="{{username}}" />
       <div class="mdc-text-field">
-        <input type="password" class="mdc-text-field__input" name="password" />
+        <input type="password" class="mdc-text-field__input" name="password" placeholder="인증번호" />
         <div class="mdc-line-ripple"></div>
-        <label class="mdc-floating-label">인증번호</label>
       </div>
       <input type="submit" class="mdc-button mdc-button--raised" value="Sign-In"
         style="position: fixed; bottom:0vw; left:0vw; width:100vw; height: 20vw; background-color: cornflowerblue;" />

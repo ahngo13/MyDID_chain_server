@@ -41,20 +41,8 @@ db.defaults({
   users: []
 }).write();
 
-var registerObjects = {
-  '1234::1234': {
-    id: 'yho.ddcdddo.d.m.com::112',
-    username: '112',
-    url: 'yho.com'
-  }
-};
-var signinObjects = {
-  '1234::1234': {
-    id: 'yho.ddcdddo.d.m.com::112',
-    username: '112',
-    url: 'yho.com'
-  }
-}
+var registerObjects = {}
+var signinObjects = {}
 
 router.use(express.json());
 
@@ -104,7 +92,7 @@ router.post('/register', (req, res) => {
     return;
   } else {
     const username = req.body.username;
-    const urlimsi = new URL(req.headers.origin);
+    const urlimsi = new URL(req.headers.origin || req.body.headers.origin);
     const url = urlimsi.hostname;
     const registerNumber = req.body.registerNumber;
     const registerObjectId = username + '::' + registerNumber;
@@ -154,6 +142,7 @@ router.post('/password', (req, res) => {
     return;
   }
   const userkey = req.cookies.username + "::" + req.body.password;
+  console.log("key" + userkey);
   console.log("regi" + registerObjects[userkey]);
   console.log("sign" + signinObjects[userkey]);
   if (!registerObjects[userkey] && !signinObjects[userkey]) {
@@ -198,7 +187,7 @@ router.get('/signout', (req, res) => {
 /****************************************************************************************수정필요 */
 router.post('/getKeys', csrfCheck, sessionCheck, (req, res) => {
   const user = db.get('users')
-    .find({ id: req.cookies.username })
+    .find({ name: req.cookies.username })
     .value();
 
   console.log(user || {});
@@ -321,13 +310,15 @@ router.post('/registerRequest', csrfCheck, sessionCheck, async (req, res) => {
       if (cp && (cp == 'none' || cp == 'indirect' || cp == 'direct')) {
         response.attestation = cp;
       }
+
+      console.log(response);
       res.json(response);
     } else {
-      res.status(400).send({ error: "해당 계정에 대한 Fido2 Credential이 존재합니다." });
+      res.status(400).send({ message: "해당 계정에 대한 Fido2 Credential이 존재합니다." });
     }
   } catch (e) {
     console.log(e);
-    res.status(400).send({ error: e });
+    res.status(400).send({ message: e });
   }
 });
 /**
@@ -401,6 +392,7 @@ router.post('/registerResponse', csrfCheck, sessionCheck, async (req, res) => {
 
       res.clearCookie('challenge');
       res.clearCookie('username');
+      res.clearCookie('signed-in');
       delete registerObjects[req.cookies.username];
 
       await chain.insert(user.id, credential.publicKey);
@@ -410,6 +402,7 @@ router.post('/registerResponse', csrfCheck, sessionCheck, async (req, res) => {
     } else {
       res.clearCookie('challenge');
       res.clearCookie('username');
+      res.clearCookie('signed-in');
       delete registerObjects[req.cookies.username];
       // Respond with user info
       res.status(400).send({ message: "해당 유저의 credentials이 존재합니다!" });
@@ -417,6 +410,7 @@ router.post('/registerResponse', csrfCheck, sessionCheck, async (req, res) => {
   } catch (e) {
     res.clearCookie('challenge');
     res.clearCookie('username');
+    res.clearCookie('signed-in');
     delete registerObjects[req.cookies.username];
     res.status(400).send({ error: e.message });
   }
@@ -424,7 +418,7 @@ router.post('/registerResponse', csrfCheck, sessionCheck, async (req, res) => {
 
 router.post('/confirmregister', (req, res) => {
   const memkey = req.body.username + '::' + req.body.registerNumber;
-  const dbkey = new URL(req.headers.origin).hostname + '::' + req.body.username;
+  const dbkey = new URL(req.headers.origin || req.body.headers.origin).hostname + '::' + req.body.username;
   console.log(memkey, dbkey);
   if (db.get('users').find({ id: dbkey }).value()) {
     res.json({ message: "등록이 성공적으로 완료되었습니다." });
@@ -456,7 +450,7 @@ router.post('/registersignin', (req, res) => {
     return;
   } else {
     const username = req.body.username;
-    const urlimsi = new URL(req.headers.origin);
+    const urlimsi = new URL(req.headers.origin || req.body.headers.origin);
     const url = urlimsi.hostname;
     const registerNumber = req.body.registerNumber;
     const registerObjectId = username + '::' + registerNumber;
@@ -482,6 +476,7 @@ router.post('/registersignin', (req, res) => {
 
 router.post('/signinRequest', csrfCheck, async (req, res) => {
   try {
+    console.log(req.cookies);
     console.log(req.cookies.username);
     if (signinObjects[req.cookies.username]) {
 
@@ -489,6 +484,8 @@ router.post('/signinRequest', csrfCheck, async (req, res) => {
       const user = db.get('users')
         .find({ id: username.id })
         .value();
+
+
 
       if (!user) {
         // Send empty response if user is not registered yet.
@@ -504,13 +501,13 @@ router.post('/signinRequest', csrfCheck, async (req, res) => {
       response.userVerification = req.body.userVerification || 'required';
       response.challenge = coerceToBase64Url(response.challenge, 'challenge');
       res.cookie('challenge', response.challenge);
-
       response.allowCredentials = [];
       response.allowCredentials.push({
         id: credId,
         type: 'public-key',
         transports: ['internal']
       });
+      console.log(response);
       res.json(response);
     } else {
       res.status(401).json({ error: 'Id와 인증번호를 확인하여 주십시오. FiDo2 기반 DID 서비스를 사용하려는 웹에서 먼저 인증요청을 해야 합니다.' });
@@ -580,7 +577,7 @@ router.post('/signinResponse', csrfCheck, async (req, res) => {
     credential.prevCounter = result.authnrData.get("counter");
 
     db.get('users')
-      .find({ id: req.cookies.id })
+      .find({ id: req.cookies.username })
       .assign(user)
       .write();
 
@@ -588,17 +585,20 @@ router.post('/signinResponse', csrfCheck, async (req, res) => {
     res.clearCookie('id');
     res.clearCookie('challenge');
     res.clearCookie('username');
+    res.clearCookie('signed-in');
     res.json(user);
   } catch (e) {
     res.clearCookie('id');
     res.clearCookie('challenge');
     res.clearCookie('username');
+    res.clearCookie('signed-in');
     res.status(400).json({ error: e });
   }
 });
 router.post('/confirmsignin', (req, res) => {
   const memkey = req.body.username + '::' + req.body.registerNumber;
-  const dbkey = new URL(req.headers.origin).hostname + '::' + req.body.username;
+  console.log(req.body);
+  const dbkey = new URL(req.headers.origin || req.body.headers.origin).hostname + '::' + req.body.username;
   if (signinObjects[memkey].confirm === 1) {
     delete signinObjects[memkey];
     res.json({ message: "인증이 완료되었습니다!", key: '1' });
