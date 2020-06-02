@@ -75,7 +75,8 @@
       })
         .then(user => {
           alert(user.message);
-          getCredentials();
+          //getCredentials();
+          location.href = '/home';
         })
         .catch(e => alert(e));
     });

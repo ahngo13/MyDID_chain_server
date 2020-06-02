@@ -78,7 +78,6 @@ export const registerCredential = async (opts) => {
       };
     }
 
-    localStorage.setItem(`credId`, credential.id);
     return await _fetch('/auth/registerResponse', credential);
   } else {
     return options;
